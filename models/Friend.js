@@ -12,13 +12,10 @@ const friendSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['initiate', 'accepted', 'rejected', 'blocked', 'unfriend'],
+        enum: ['initiate', 'accepted', 'blocked', 'unfriend'],
         default: 'initiate'
     },
     acceptedAt: {
-        type: Date
-    },
-    rejectedAt: {
         type: Date
     },
     blockedAt: {
@@ -29,6 +26,7 @@ const friendSchema = new mongoose.Schema({
     }
 }, {
   timestamps: true, // This will automatically add createdAt and updatedAt fields
+  paranoid: true
 });
 
 // Create the model

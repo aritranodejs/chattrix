@@ -179,11 +179,14 @@ const toggleStatus = async (req, res) => {
                 acceptedAt: new Date()
             };
             message = 'You both are now friends';
-        } else if (status === 'rejected') {
-            updateData = {
-                status: 'rejected',
-                rejectedAt: new Date()
-            };
+        } else if (status === 'deleted') {
+            // Delete the friend relationship
+            await Friend.findOneAndDelete({
+                $or: [
+                    { senderId: _id, receiverId: receiverId }, // Current user is the sender
+                    { senderId: receiverId, receiverId: _id }  // Current user is the receiver
+                ]
+            });
             message = 'Friend request rejected';
         } else if (status === 'blocked') {
             updateData = {
@@ -211,10 +214,6 @@ const toggleStatus = async (req, res) => {
             updateData,
             { new: true } // Return the updated document
         ).lean();
-
-        if (!friend) {
-            return response(res, {}, 'Friend relationship not found', 422);
-        }
 
         return response(res, friend, message, 200);
     } catch (error) {
