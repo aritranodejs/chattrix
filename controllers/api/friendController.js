@@ -21,7 +21,7 @@ const index = async (req, res) => {
                 { senderId: _id },
                 { receiverId: _id }
             ],
-            status: { $in: ['accepted', 'blocked'] } // Status can be 'accepted' or 'blocked'
+            status: { $in: ['initiate', 'accepted', 'blocked'] } // Status can be 'accepted' or 'blocked'
         }).populate('receiverId') // Populate receiverId and get all the fields 
         .populate('senderId') // Populate senderId to get details if needed
         .lean();
@@ -138,11 +138,11 @@ const store = async (req, res) => {
 
         if (friendExists) {
             errors['receiverId'] = {
-                'rule' : 'unique',
-                'message' : 'Already sent a friend request'
-            }
+              'rule': 'unique',
+              'message': 'You have already sent a friend request to this user.'
+            };
         }
-
+          
         // If there are any errors, return them
         if (Object.keys(errors).length > 0) {
             return response(res, req.body, errors, 422);
@@ -202,7 +202,12 @@ const toggleStatus = async (req, res) => {
         }
 
         const friend = await Friend.findOneAndUpdate(
-            { senderId: _id, receiverId: receiverId },
+            {
+                $or: [
+                  { senderId: _id, receiverId: receiverId }, // Current user is the sender
+                  { senderId: receiverId, receiverId: _id }, // Current user is the receiver
+                ],
+            },
             updateData,
             { new: true } // Return the updated document
         ).lean();

@@ -7,18 +7,20 @@ const { response } = require("../../config/response");
 // Model
 const { Chat } = require('../../models/Chat');
 
-const chatsWithReceiver = async (req, res) => { // Socket 
+const chatsWithReceiver = async (req, res) => { 
     try {
         const {
-            _id
+            _id 
         } = req.user;
         const {
-            receiverId
+            receiverId 
         } = req.params;
 
         const chats = await Chat.find({
-            senderId: _id,
-            receiverId: receiverId
+            $or: [
+                { senderId: _id, receiverId: receiverId }, // Case where logged-in user is the sender
+                { senderId: receiverId, receiverId: _id }  // Case where logged-in user is the receiver
+            ]
         }).lean(); // Makes it a plain JS object
 
         return response(res, chats, 'Chats', 200);
