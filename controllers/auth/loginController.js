@@ -104,6 +104,8 @@ const logout = async (req, res) => {
         blacklistedTokens.add(user.authToken);
 
         user.authToken = null;
+        user.isOnline = false;
+        user.lastSeenAt = new Date();
         await user.save();
 
         return response(res, user, 'User logout successfull.', 200);

@@ -53,37 +53,44 @@ const index = async (req, res) => {
 
 const searchFriends = async (req, res) => {
     try {
-        const { 
-            _id 
-        } = req.user;
-
-        let { 
-            search 
-        } = req.query;
+        const { _id } = req.user;
+        let { search } = req.query;
 
         // Search for users based on the search query
         const friends = await User.find({
             $or: [
-                {
-                    name: {
-                        $regex: search,
-                        $options: 'i' // Case-insensitive search for name
-                    },
-                },
-                {
-                    uniqueId: {
-                        $regex: search,
-                        $options: 'i' // Case-insensitive search for uniqueId
-                    }
-                }
+                { name: { $regex: search, $options: 'i' } }, // Case-insensitive search for name
+                { uniqueId: { $regex: search, $options: 'i' } } // Case-insensitive search for uniqueId
             ],
-            _id: { $ne: _id }, // Exclude the current use
+            _id: { $ne: _id }, // Exclude the current user
             status: 'active', // Only search active users
             role: 'user' // Search only users with the role 'user'
         }).lean();
 
         const friendIds = friends.map(friend => friend._id);
 
+        // Get the current user's friend list
+        const userFriends = await Friend.find({
+            $or: [
+                { senderId: _id, status: 'accepted' }, // Friends where the current user is the sender
+                { receiverId: _id, status: 'accepted' } // Friends where the current user is the receiver
+            ]
+        }).lean();
+
+        // Create a Set of the current user's friend IDs for fast lookup
+        const userFriendIds = new Set(
+            userFriends.map(friend => 
+                friend.senderId.toString() === _id.toString() ? friend.receiverId.toString() : friend.senderId.toString()
+            )
+        );
+
+        // Modify the friends array to include isFriend: true/false
+        const updatedFriends = friends.map(friend => ({
+            ...friend,
+            isFriend: userFriendIds.has(friend._id.toString()) // Check if the friend is in the user's friend list
+        }));
+
+        // Fetch drives (related images or additional user info)
         const drives = await Drive.find({
             $or: [
                 { senderId: { $in: friendIds } },
@@ -91,15 +98,17 @@ const searchFriends = async (req, res) => {
             ],
             tableType: 'users',
             fileType: 'users_image'
-        }).populate('receiverId') // Populate receiverId with all details
-        .populate('senderId') // Populate senderId to get details if needed
+        })
+        .populate('receiverId') // Populate receiverId with all details
+        .populate('senderId') // Populate senderId if needed
         .lean();
 
-        return response(res, { friends, drives }, 'Friends', 200);
+        return response(res, { friends: updatedFriends, drives }, 'Friends', 200);
     } catch (error) {
         return response(res, req.body, error.message, 500);
     }
-}
+};
+
 
 const store = async (req, res) => { 
     try {
