@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 
 // Define the schema with timestamps option
 const driveSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the User model
-    },
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', // Reference to the User model

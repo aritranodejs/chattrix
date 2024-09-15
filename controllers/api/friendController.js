@@ -7,45 +7,95 @@ const { response } = require("../../config/response");
 // Model
 const { User } = require('../../models/User');
 const { Friend } = require('../../models/Friend');
-
-const searchFriends = async (req, res) => {
-    let { search } = req.query;
-
-    const friends = await User.find({
-        $or: [
-            {
-                name: {
-                    $regex: search,
-                    $options: 'i' // Case-insensitive search for name
-                },
-            },
-            {
-                uniqueId: {
-                    $regex: search,
-                    $options: 'i' // Case-insensitive search for uniqueId
-                }
-            }
-        ],
-        status: 'active', // Only search active users
-        role: 'user' // Search only users with the role 'user'
-    }).lean();
-
-    return response(res, friends, 'Friends', 200);
-};
+const { Drive } = require('../../models/Drive');
 
 const index = async (req, res) => { 
     try {
-        const {
-            _id
+        const { 
+            _id 
         } = req.user;
 
+        // Fetch friends where the user is either the sender or receiver
         const friends = await Friend.find({
-            senderId: _id,
+            $or: [
+                { senderId: _id },
+                { receiverId: _id }
+            ],
             status: { $in: ['accepted', 'blocked'] } // Status can be 'accepted' or 'blocked'
-        }).populate('receiverId', 'name') // Populate receiverId and get only the 'name' field
+        }).populate('receiverId') // Populate receiverId and get all the fields 
+        .populate('senderId') // Populate senderId to get details if needed
         .lean();
 
-        return response(res, friends, 'Friends', 200);
+        // Extract IDs of friends for further querying
+        const friendIds = friends.map(friend => 
+            friend.senderId._id.toString() !== _id.toString() 
+            ? friend.senderId._id 
+            : friend.receiverId._id
+        );
+
+        // Fetch drives related to these friends where the user is either the sender or receiver
+        const drives = await Drive.find({
+            $or: [
+                { senderId: _id, receiverId: { $in: friendIds } },
+                { receiverId: _id, senderId: { $in: friendIds } }
+            ],
+            tableType: 'users',
+            fileType: 'users_image'
+        }).populate('receiverId') // Populate receiverId with all details
+        .populate('senderId') // Populate senderId to get details if needed
+        .lean();
+
+        return response(res, { friends, drives }, 'Friends', 200);
+    } catch (error) {
+        return response(res, req.body, error.message, 500);
+    }
+}
+
+const searchFriends = async (req, res) => {
+    try {
+        const { 
+            _id 
+        } = req.user;
+
+        let { 
+            search 
+        } = req.query;
+
+        // Search for users based on the search query
+        const friends = await User.find({
+            $or: [
+                {
+                    name: {
+                        $regex: search,
+                        $options: 'i' // Case-insensitive search for name
+                    },
+                },
+                {
+                    uniqueId: {
+                        $regex: search,
+                        $options: 'i' // Case-insensitive search for uniqueId
+                    }
+                }
+            ],
+            _id: { $ne: _id }, // Exclude the current use
+            status: 'active', // Only search active users
+            role: 'user' // Search only users with the role 'user'
+        }).lean();
+
+        const friendIds = friends.map(friend => friend._id);
+
+        const drives = await Drive.find({
+            $or: [
+                { senderId: { $in: friendIds } },
+                { receiverId: { $in: friendIds } }
+            ],
+            tableType: 'users',
+            fileType: 'users_image'
+        }).populate('receiverId') // Populate receiverId with all details
+        .populate('senderId') // Populate senderId to get details if needed
+        .lean();
+
+        return response(res, { friends, drives }, 'Friends', 200);
     } catch (error) {
         return response(res, req.body, error.message, 500);
     }
@@ -93,7 +143,7 @@ const store = async (req, res) => {
         friend.senderId = _id;
         friend.receiverId = receiverId;
         friend.status = 'initiate';
-        friend.save();
+        await friend.save();
 
         return response(res, friend, 'Friend Request Sent Successfully', 200);
     } catch (error) {
@@ -157,7 +207,6 @@ const toggleStatus = async (req, res) => {
         return response(res, req.body, error.message, 500);
     }
 };
-
 
 module.exports = {
     searchFriends,

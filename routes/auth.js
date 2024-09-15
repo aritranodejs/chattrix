@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 router.group('/', (router) => {
     router.post("/register", register);
     router.post("/login", login);
-    router.delete('/logout', [authentication], logout); 
+    router.post('/logout', [authentication], logout); 
 });
 
 module.exports = router;

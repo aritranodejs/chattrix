@@ -90,13 +90,11 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
     try {
         const { 
-            id 
+            _id 
         } = req.user;
         
         const user = await User.findOne({
-            where: {
-                id: id 
-            }
+            _id: _id 
         });
         if (!user) {
             return response(res, req.body, 'User not found.', 422);
