@@ -45,8 +45,6 @@ const roleAuthorization = (roleString) => (req, res, next) => {
     role 
   } = req.user;
 
-  console.log('req.user=======>', req.user);
-  
   if (role !== roleString) {
     return response(res, req.body, "Access forbidden.", 403);
   }

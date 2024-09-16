@@ -1,15 +1,9 @@
+// socketHelper.js
 module.exports = {
-    emitEvent: (io, eventName, data) => {
-        io.emit(eventName, data);
+    emitEventToRoom: (io, room, eventName, data) => {
+        io.to(room).emit(eventName, data); // Emit the event to a specific room
     },
-
-    emitRestaurantEvent: (io, restaurantId, eventName, data) => {
-        if (io && restaurantId) {
-            // Emit the event only to the room for the restaurant
-            io.to(`restaurant_${restaurantId}`).emit(eventName, data);
-            console.log(`Emitted event ${eventName} to restaurant_${restaurantId}`);
-        } else {
-            console.error('Invalid restaurantId or io instance');
-        }
+    emitEventToAll: (io, eventName, data) => {
+        io.emit(eventName, data); // Emit the event to all connected clients
     }
 };

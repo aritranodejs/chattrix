@@ -4,6 +4,9 @@ const { Validator } = require('node-input-validator');
 // Helpers
 const { response } = require("../../config/response");
 
+// Socket Helper
+const { emitEventToRoom } = require('../../helpers/socketHelper');
+
 // Model
 const { Chat } = require('../../models/Chat');
 
@@ -57,13 +60,17 @@ const store = async (req, res) => { // Socket
         chat.message = message;
         chat.save();
 
+        // Send message to the chat room using Socket.IO
+        const room = _id < receiverId ? `${_id}-${receiverId}` : `${receiverId}-${_id}`;
+        emitEventToRoom(req?.io, room, 'message', chat);
+
         return response(res, chat, 'Message Sent Successfully', 200);
     } catch (error) {
         return response(res, req.body, error.message, 500);
     }
 }
 
-const edit = async (req, res) => { // Socket 
+const edit = async (req, res) => {
     try {
         // Validate the input
         const validator = new Validator(req.body, {
@@ -96,7 +103,7 @@ const edit = async (req, res) => { // Socket
     }
 }
 
-const destroy = async (req, res) => { // Socket 
+const destroy = async (req, res) => {
     try {
         const { id } = req.params;
 

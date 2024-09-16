@@ -18,7 +18,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
   cors: {
-      origin: "*",  // Allow all origins for testing
+      origin: process.env.SITE_URL,  
       methods: ["GET", "POST"],
   }
 });
@@ -67,9 +67,23 @@ app.use((req, res, next) => {
 // ejs View Engine
 app.set("view engine", "ejs");
 
+// Socket.IO connection handler
+io.on('connection', (socket) => {
+  console.log('A client connected:', socket.id);
+
+  socket.on('joinRoom', (room) => {
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A client disconnected:', socket.id);
+  });
+});
+
 // Server listen
 var PORT = process.env.APP_PORT || 5000;
-app.listen(PORT, (error) => {
+server.listen(PORT, (error) => {
   if (error) throw error;
   console.log(`Express server started at http://localhost:${PORT}`);
 });
