@@ -3,7 +3,7 @@
 const config = {
   mongodb: {
     // TODO Change (or review) the url to your MongoDB:
-    url: "mongodb+srv://aritranodejsdeveloper:D1nFfhIQ5hf9TABW@cluster0.v5wk1hp.mongodb.net?retryWrites=true&w=majority&appName=Cluster0",
+    url: "mongodb+srv://aritranodejsdeveloper:1ElGvZlwvqX80PVN@cluster0.v5wk1hp.mongodb.net?retryWrites=true&w=majority&appName=Cluster0",
 
     // TODO Change this to your database name:
     databaseName: "chattrix",
