@@ -1,18 +1,18 @@
-const express = require("express");
-const group = require("express-group-routes");
-
-// Router
-var router = express.Router();
+import express from 'express';
+import group from 'express-group-routes';
 
 // Helpers
-const { response } = require("../config/response");
+import { response } from '../config/response.js';
 
 // JWT Middleware - Auth
-const { authentication, roleAuthorization } = require('../config/auth');
+import { authentication, roleAuthorization } from '../config/auth.js';
 
-// Controllers 
-const { register } = require('../controllers/auth/registerController');
-const { login, logout } = require('../controllers/auth/loginController');
+// Controllers
+import { register } from '../controllers/auth/registerController.js';
+import { login, logout } from '../controllers/auth/loginController.js';
+
+// Router
+const router = express.Router();
 
 // Routes
 router.get('/', (req, res) => {
@@ -24,9 +24,10 @@ router.get('/', (req, res) => {
 });
 
 router.group('/', (router) => {
-    router.post("/register", register);
-    router.post("/login", login);
-    router.post('/logout', [authentication], logout); 
+    router.post('/register', register);
+    router.post('/login', login);
+    router.post('/logout', [authentication], logout);
 });
 
-module.exports = router;
+// Default export 
+export default router;

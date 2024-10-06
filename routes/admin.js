@@ -1,17 +1,14 @@
-const express = require("express");
-const group = require("express-group-routes");
-
-// Router
-var router = express.Router();
+import express from 'express';
+import group from 'express-group-routes';
 
 // Helpers
-const { response } = require("../config/response");
+import { response } from '../config/response.js';
 
 // JWT Middleware - Auth
-const { authentication, roleAuthorization } = require('../config/auth');
+import { authentication, roleAuthorization } from '../config/auth.js';
 
-// Controllers 
-
+// Router
+const router = express.Router();
 
 // Routes
 router.get('/', (req, res) => {
@@ -22,4 +19,5 @@ router.get('/', (req, res) => {
     }
 });
 
-module.exports = router;
+// Default export 
+export default router;

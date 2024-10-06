@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Define the schema with timestamps option
 const driveSchema = new mongoose.Schema({
@@ -33,6 +33,7 @@ const driveSchema = new mongoose.Schema({
 // Create the model
 const Drive = mongoose.model('Drive', driveSchema);
 
-module.exports = {
+// Export as a named export
+export {
     Drive
 };

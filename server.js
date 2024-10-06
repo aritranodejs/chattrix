@@ -1,41 +1,50 @@
-const express = require("express");
+import express from 'express';
+import dotenv from 'dotenv';
+import compression from 'compression';
+import cors from 'cors';
+import http from 'http';
+import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url'; // To handle __dirname in ESM
 
 // Load environment variables from .env file
-require("dotenv").config();
+dotenv.config();
 
 // Create Express app
 const app = express();
 
-// Cors
-const cors = require("cors");
+// Compress all responses
+app.use(compression());
+
+// Enable CORS
 app.use(cors());
 
-// For Socket
-const http = require('http'); // Import Node's HTTP module
-const { Server } = require('socket.io');
 // Create an HTTP server to pass to Socket.IO
 const server = http.createServer(app);
+
 // Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
   cors: {
-      origin: process.env.SITE_URL,  
-      methods: ["GET", "POST"],
-  }
+    origin: process.env.SITE_URL,
+    methods: ['GET', 'POST'],
+  },
 });
 
-// express urlencoded 
+// Express urlencoded and JSON middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Path
-const path = require("path");
+// Resolve __dirname in ESM
+// In ES modules (.mjs), we cannot use __dirname directly as we can in CommonJS. However, we can replicate __dirname functionality using fileURLToPath and import.meta.url.
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Serve Static Resources
-app.use("/public", express.static("public"));
-app.use(express.static(path.join(__dirname, "public")));
+// Serve static resources
+app.use('/public', express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Connect to the database
-const connectDB = require("./config/database");
+// Connect to the database (make sure to add .js extension)
+import connectDB from './config/database.js';
 connectDB();
 
 // Global variables
@@ -47,25 +56,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
-const authRoutes = require("./routes/auth");
-app.use("/api/auth", authRoutes); // Auth Route
+import authRoutes from './routes/auth.js';
+app.use('/api/auth', authRoutes);
 
-const apiRoutes = require("./routes/api");
-app.use("/api", apiRoutes); // API Route
+import apiRoutes from './routes/api.js';
+app.use('/api', apiRoutes);
 
-const adminRoutes = require("./routes/admin");
-app.use("/api/admin", adminRoutes); // Admin Route
+import adminRoutes from './routes/admin.js';
+app.use('/api/admin', adminRoutes);
 
+// 404 route
 app.use((req, res, next) => {
-  res.status(404).render("404", {
+  res.status(404).render('404', {
     layout: false,
-    title: "Page Not Found",
+    title: 'Page Not Found',
   });
-}); // 404 Route
+});
 
-// ejs View Engine
-app.set("view engine", "ejs");
+// Set ejs as the view engine
+app.set('view engine', 'ejs');
 
 // Socket.IO connection handler
 io.on('connection', (socket) => {
@@ -82,7 +91,7 @@ io.on('connection', (socket) => {
 });
 
 // Server listen
-var PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT || 5000;
 server.listen(PORT, (error) => {
   if (error) throw error;
   console.log(`Express server started at http://localhost:${PORT}`);

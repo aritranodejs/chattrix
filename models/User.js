@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Define the schema with timestamps option
 const userSchema = new mongoose.Schema({
@@ -69,6 +69,7 @@ const userSchema = new mongoose.Schema({
 // Create the model
 const User = mongoose.model('User', userSchema);
 
-module.exports = {
-  User
+// Export as a named export
+export { 
+  User 
 };

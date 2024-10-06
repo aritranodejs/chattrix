@@ -1,21 +1,21 @@
-// Validator
-const { Validator } = require('node-input-validator');
+// Import Validator (from node-input-validator)
+import { Validator } from 'node-input-validator';
 
-// Bcrypt for hash password
-const bcrypt = require('bcrypt');
+// Import Bcrypt for password hashing
+import bcrypt from 'bcrypt';
 
-// Common Response
-const { response } = require('../../config/response');
+// Import Common Response
+import { response } from '../../config/response.js';
 
-// JWT Middleware - Auth
-const { generateAuthToken } = require('../../config/auth');
+// Import JWT Middleware - Auth
+import { generateAuthToken } from '../../config/auth.js';
 
-// User Agent
-const useragent = require('useragent');
+// Import User Agent Parser
+import useragent from 'useragent';
 
-// Model
-const { User } = require('../../models/User');
-const { LoggedDevice } = require('../../models/LoggedDevice');
+// Import Models
+import { User } from '../../models/User.js';
+import { LoggedDevice } from '../../models/LoggedDevice.js';
 
 const login = async (req, res) => {
     try {
@@ -114,7 +114,8 @@ const logout = async (req, res) => {
     }
 }
 
-module.exports = {
+// Export as a named export
+export { 
     login,
     logout
 };

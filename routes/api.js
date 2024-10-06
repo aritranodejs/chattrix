@@ -1,18 +1,18 @@
-const express = require("express");
-const group = require("express-group-routes");
+import express from "express";
+import group from "express-group-routes"; 
 
 // Router
-var router = express.Router();
+const router = express.Router();
 
 // Helpers
-const { response } = require("../config/response");
+import { response } from "../config/response.js"; 
 
 // JWT Middleware - Auth
-const { authentication, roleAuthorization } = require('../config/auth');
+import { authentication, roleAuthorization } from '../config/auth.js'; 
 
 // Controllers 
-const friendController = require('../controllers/api/friendController');
-const chatController = require('../controllers/api/chatController');
+import * as friendController from '../controllers/api/friendController.js'; 
+import * as chatController from '../controllers/api/chatController.js'; 
 
 // Routes
 router.get('/', (req, res) => {
@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 router.group('/friends', (router) => {
     router.use([authentication, roleAuthorization('user')]);
     router.get('/', friendController.index);
-    router.get('/search', friendController.searchFriends)
+    router.get('/search', friendController.searchFriends);
     router.post('/store', friendController.store);
     router.post('/toggle/:receiverId/:status', friendController.toggleStatus);
 });
@@ -39,4 +39,5 @@ router.group('/chats', (router) => {
     router.delete('/destroy/:id', chatController.destroy);
 });
 
-module.exports = router;
+// Default export 
+export default router; 

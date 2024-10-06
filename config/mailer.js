@@ -1,14 +1,14 @@
 // Nodemailer
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // Path
-const path = require('path');
+import path from 'path';
 
 // Read the HTML email template file
-const emailTemplatePath = path.join(__dirname, '../views/email/template.ejs');
+const emailTemplatePath = path.join(process.cwd(), 'views/email/template.ejs'); // Use process.cwd() to get the current directory
 
-const host = process.env.MAIL_ENCRYPTION + '://' + process.env.MAIL_HOST;
-var transporter = nodemailer.createTransport({
+const host = `${process.env.MAIL_ENCRYPTION}://${process.env.MAIL_HOST}`;
+const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: host,
     port: process.env.MAIL_PORT,
@@ -28,7 +28,8 @@ transporter.verify((err, info) => {
     }
 });
 
-module.exports = {
-    transporter,
-    emailTemplatePath
+// Export as a named export
+export { 
+    transporter, 
+    emailTemplatePath 
 };

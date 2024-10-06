@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Define the schema with timestamps option
 const loggedDeviceSchema = new mongoose.Schema({
@@ -31,6 +31,7 @@ const loggedDeviceSchema = new mongoose.Schema({
 // Create the model
 const LoggedDevice = mongoose.model('LoggedDevice', loggedDeviceSchema);
 
-module.exports = {
-    LoggedDevice
+// Export as a named export
+export { 
+    LoggedDevice 
 };

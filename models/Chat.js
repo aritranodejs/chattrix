@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Define the schema with timestamps option
 const chatSchema = new mongoose.Schema({
@@ -20,6 +20,7 @@ const chatSchema = new mongoose.Schema({
 // Create the model
 const Chat = mongoose.model('Chat', chatSchema);
 
-module.exports = {
+// Export as a named export
+export {
     Chat
 };

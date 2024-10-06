@@ -1,14 +1,14 @@
 // Validator
-const { Validator } = require('node-input-validator');
+import { Validator } from 'node-input-validator';
 
 // Helpers
-const { response } = require("../../config/response");
+import { response } from '../../config/response.js';
 
 // Socket Helper
-const { emitEventToRoom } = require('../../helpers/socketHelper');
+import { emitEventToRoom } from '../../helpers/socketHelper.js';
 
 // Model
-const { Chat } = require('../../models/Chat');
+import { Chat } from '../../models/Chat.js';
 
 const chatsWithReceiver = async (req, res) => { 
     try {
@@ -118,7 +118,8 @@ const destroy = async (req, res) => {
     }   
 }
 
-module.exports = {
+// Export as a named export
+export {
     chatsWithReceiver,
     store,
     edit,

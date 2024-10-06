@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const dbURI = process.env.DB_CONNECTION_URL;
 
@@ -22,4 +22,5 @@ const connectDB = async () => {
 };
 
 // Export the connectDB function
-module.exports = connectDB;
+// Default export 
+export default connectDB;

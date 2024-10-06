@@ -1,20 +1,20 @@
-// Validator
-const { Validator } = require('node-input-validator');
+// Import ES6 modules
+import { Validator } from 'node-input-validator';
 
 // Bcrypt for hash password
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 const salt = bcrypt.genSaltSync(10); // generate a salt
 
 // Common Response
-const { response } = require('../../../config/response');
+import { response } from '../../../config/response.js';
 
 // Mailer
-const { transporter, emailTemplatePath, mailOption } = require('../../../config/mailer');
-const ejs = require('ejs');
+import { transporter, emailTemplatePath, mailOption } from '../../../config/mailer.js';
+import ejs from 'ejs';
 
-// Model
-const { Op } = require('sequelize');
-const { User } = require('../../../models/User');
+// Sequelize and User Model
+import { Op } from 'sequelize';
+import { User } from '../../../models/User.js';
 
 const resetPassword = async (req, res) => {
   try {
@@ -87,6 +87,7 @@ const resetPassword = async (req, res) => {
   }
 }
 
-module.exports = {
+// Export as a named export
+export {
   resetPassword
 };

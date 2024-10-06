@@ -1,20 +1,20 @@
-// Validator
-const { Validator } = require('node-input-validator');
+// Import ES6 modules
+import { Validator } from 'node-input-validator';
 
 // Common Response
-const { response } = require('../../../../config/response');
+import { response } from '../../../../config/response.js';
 
 // nanoid - Unique Token
-const nanoid = require('nanoid');
-const generateUniqueCode = nanoid.customAlphabet('0123456789', 4);
+import { customAlphabet } from 'nanoid';
+const generateUniqueCode = customAlphabet('0123456789', 4);
 
 // Mailer
-const { transporter, emailTemplatePath, mailOption } = require('../../../../config/mailer');
-const ejs = require('ejs');
+import { transporter, emailTemplatePath, mailOption } from '../../../../config/mailer.js';
+import ejs from 'ejs';
 
 // Model
-const { Op } = require('sequelize');
-const { User } = require('../../../../models/User');
+import { Op } from 'sequelize';
+import { User } from '../../../../models/User.js';
 
 const forgotPassword = async (req, res) => {
   try {
@@ -79,6 +79,7 @@ const forgotPassword = async (req, res) => {
   }
 }
 
-module.exports = {
+// Export as a named export
+export {
   forgotPassword
 };

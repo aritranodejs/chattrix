@@ -6,6 +6,7 @@ const response = (res, data = [], message = 'success', status = 200) => {
     });
 }
 
-module.exports = {
-    response
+// Named exports 
+export { 
+    response 
 };

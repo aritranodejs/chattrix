@@ -1,20 +1,24 @@
-// JWT
-const jwt = require("jsonwebtoken");
+// Import jwt
+import jwt from 'jsonwebtoken';
+
 const accessTokenSecret = process.env.JWT_SECRET || "jwtsecret";
 
 // Common Response
-const { response } = require("./response");
+import { response } from './response.js';
 
+// Generate Auth Token
 const generateAuthToken = ({ _id, role, name, email, mobile }) => {
-  return jwt.sign({ _id, role, name, email, mobile },accessTokenSecret);
+  return jwt.sign({ _id, role, name, email, mobile }, accessTokenSecret);
 };
 
+// Authentication Middleware
 const authentication = (req, res, next) => {
   const header = req?.headers?.authorization;
   if (!header) {
     return response(res, req.body, "Missing authorization token.", 401);
   }
   const token = header.includes(" ") ? header.split(" ")[1] : header;
+  
   // Check if the token is blacklisted
   if (blacklistedTokens.has(token)) {
     return response(res, req.body, "Expired authorization token.", 401);
@@ -40,10 +44,9 @@ const authentication = (req, res, next) => {
   });
 };
 
+// Role Authorization Middleware
 const roleAuthorization = (roleString) => (req, res, next) => {
-  const { 
-    role 
-  } = req.user;
+  const { role } = req.user;
 
   if (role !== roleString) {
     return response(res, req.body, "Access forbidden.", 403);
@@ -52,8 +55,9 @@ const roleAuthorization = (roleString) => (req, res, next) => {
   next();
 };
 
-module.exports = {
-  generateAuthToken,
-  authentication,
-  roleAuthorization
+// Named exports 
+export { 
+  generateAuthToken, 
+  authentication, 
+  roleAuthorization 
 };

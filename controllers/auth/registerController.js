@@ -1,33 +1,33 @@
 // Validator
-const { Validator } = require("node-input-validator");
+import { Validator } from "node-input-validator";
 
 // Bcrypt
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 const salt = bcrypt.genSaltSync(10); // generate a salt
 
 // Helpers
-const { response } = require("../../config/response");
+import { response } from "../../config/response.js";
 
 // JWT Middleware - Auth
-const { generateAuthToken } = require('../../config/auth');
+import { generateAuthToken } from '../../config/auth.js';
 
 // Mailer
-const { transporter, emailTemplatePath } = require('../../config/mailer');
-const ejs = require('ejs');
+import { transporter, emailTemplatePath } from '../../config/mailer.js';
+import ejs from 'ejs';
 
 // Slug 
-const slug = require('slug');
+import slug from 'slug';
 
 // crypto - Generate a random token
-const crypto = require('crypto');
+import crypto from 'crypto';
 const uniqueToken = crypto.randomBytes(5).toString('hex');
 
 // User Agent
-const useragent = require('useragent');
+import useragent from 'useragent';
 
 // Models
-const { User } = require("../../models/User");
-const { LoggedDevice } = require('../../models/LoggedDevice');
+import { User } from "../../models/User.js";
+import { LoggedDevice } from '../../models/LoggedDevice.js';
 
 const register = async (req, res) => {
     try {
@@ -139,6 +139,7 @@ const register = async (req, res) => {
     }
 };
 
-module.exports = { 
+// Export as a named export
+export { 
     register 
 };

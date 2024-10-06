@@ -1,6 +1,6 @@
-const moment = require('moment');
+import moment from 'moment';
 
-const isValidDate = (dateString, format = 'YYYY-MM-DD') => {
+export const isValidDate = (dateString, format = 'YYYY-MM-DD') => {
     let formattedDate = null;
     const formats = [
         'DD-MM-YYYY',
@@ -27,25 +27,25 @@ const isValidDate = (dateString, format = 'YYYY-MM-DD') => {
     return formattedDate;
 };
 
-const formatedDateTime = (dateString, format = 'YYYY-MM-DD HH:mm:ss') => {
+export const formatedDateTime = (dateString, format = 'YYYY-MM-DD HH:mm:ss') => {
     const date = isValidDate(dateString, format);
     if (!date) return null;
     return moment(date).format(format);
 };
 
-const formatedDate = (dateString, format = 'YYYY-MM-DD') => {
+export const formatedDate = (dateString, format = 'YYYY-MM-DD') => {
     const date = isValidDate(dateString, format);
     if (!date) return null;
     return moment(date).format(format);
 };
 
-const futureDate = (dateString, day = 1, format = 'YYYY-MM-DD') => {
+export const futureDate = (dateString, day = 1, format = 'YYYY-MM-DD') => {
     const date = formatedDate(dateString, format);
     if (!date) return null;
     return moment(date).add(day, 'days').format(format);
 };
 
-const uniqueFileName = (prefix) => {
+export const uniqueFileName = (prefix) => {
     let date = new Date();
     let year = date.getFullYear();
     let month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -55,9 +55,9 @@ const uniqueFileName = (prefix) => {
     let seconds = ('0' + date.getSeconds()).slice(-2);
 
     return prefix + '-' + year + month + day + '-' + hours + minutes + seconds;
-}
+};
 
-module.exports = {
+export {
     isValidDate,
     formatedDateTime,
     formatedDate,

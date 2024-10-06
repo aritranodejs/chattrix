@@ -1,44 +1,43 @@
-const path = require('path');
-const url = require('url');
-const fs = require('fs');
+import path from 'path';
+import url from 'url';
+import fs from 'fs';
 
 // Multer
-const multer = require('multer');
+import multer from 'multer';
 
 // Jimp
-const jimp = require('jimp');
+import jimp from 'jimp';
 
 // Custom helper
-const { uniqueFileName } = require('./custom');
+import { uniqueFileName } from './custom.js'; // Ensure this file has a .js or .mjs extension
 
 const upload = (fields, mimeTypes = [], folder = '') => {
     return multer({
         storage: multer.diskStorage({
-            destination: ((req, file, cb) => {
+            destination: (req, file, cb) => {
                 let dirPath = 'public/uploads';
-                if (file.fieldname == 'avatar') {
+                if (file.fieldname === 'avatar') {
                     dirPath += '/profile';
                 } else {
                     dirPath += `/${folder}`;
                 }
 
                 if (!fs.existsSync(dirPath)) {
-                    fs.mkdirSync(dirPath);
+                    fs.mkdirSync(dirPath, { recursive: true }); // Create the directory recursively
                 }
                 cb(null, dirPath);
-            }),
-            filename: ((req, file, cb) => {
+            },
+            filename: (req, file, cb) => {
                 let fileName = uniqueFileName(file.fieldname);
-                fileName += path.extname(url.parse(file.originalname).pathname);
+                fileName += path.extname(url.fileURLToPath(file.originalname));
 
                 cb(null, fileName);
-            })
+            }
         }),
         fileFilter: (req, file, cb) => {
             if (mimeTypes.includes(file.mimetype) || mimeTypes.length === 0) {
                 cb(null, true);
             } else {
-                // cb('Wrong file type!', null);
                 req.fileValidationError = 'Wrong file type!';
                 return cb(null, false, req.fileValidationError);
             }
@@ -52,11 +51,10 @@ const thumbnail = async (imagePath, destination, filename, width = 256, height =
         const image = await jimp.read(imagePath);
         image.resize(width, height); // resize the image. Jimp.AUTO can be passed as one of the values.
         image.quality(n); // set the quality of saved JPEG, 0 - 100
-        // image.mask(src, x, y); // masks the image with another Jimp image at x, y using average pixel value
 
         let newImagePath = destination + '/thumb/';
         if (!fs.existsSync(newImagePath)) {
-            fs.mkdirSync(newImagePath);
+            fs.mkdirSync(newImagePath, { recursive: true }); // Create the directory recursively
         }
         newImagePath += filename;
         await image.writeAsync(newImagePath); // save to final destination path
@@ -66,7 +64,7 @@ const thumbnail = async (imagePath, destination, filename, width = 256, height =
     }
 }
 
-module.exports = {
+export {
     upload,
     thumbnail
 };

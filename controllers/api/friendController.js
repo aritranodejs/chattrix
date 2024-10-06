@@ -1,13 +1,13 @@
 // Validator
-const { Validator } = require('node-input-validator');
+import { Validator } from 'node-input-validator';
 
 // Helpers
-const { response } = require("../../config/response");
+import { response } from '../../config/response.js';
 
-// Model
-const { User } = require('../../models/User');
-const { Friend } = require('../../models/Friend');
-const { Drive } = require('../../models/Drive');
+// Models
+import { User } from '../../models/User.js';
+import { Friend } from '../../models/Friend.js';
+import { Drive } from '../../models/Drive.js';
 
 const index = async (req, res) => { 
     try {
@@ -221,7 +221,8 @@ const toggleStatus = async (req, res) => {
     }
 };
 
-module.exports = {
+// Export as a named export
+export {
     searchFriends,
     index,
     store,
