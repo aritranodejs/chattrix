@@ -12,8 +12,7 @@ import { response } from '../../../config/response.js';
 import { transporter, emailTemplatePath, mailOption } from '../../../config/mailer.js';
 import ejs from 'ejs';
 
-// Sequelize and User Model
-import { Op } from 'sequelize';
+// User Model
 import { User } from '../../../models/User.js';
 
 const resetPassword = async (req, res) => {
@@ -35,18 +34,16 @@ const resetPassword = async (req, res) => {
     } = req.body;
 
     const user = await User.findOne({
-      where: {
-        [Op.and]: [
-          { passwordToken: { [Op.eq]: token } },
-          { passwordTokenExpired: { [Op.ne]: null } }
-        ]
-      }
+      $and: [
+        { passwordToken: token },
+        { passwordTokenExpired: { $ne: null } }
+      ]
     });
     if (!user) {
       return response(res, req.body, 'Invalid token.', 401);
     }
 
-    if (user?.resetExpiries?.getTime() < new Date(Date.now() - 1 * 60 * 60 * 1000).getTime()) {
+    if (user?.passwordTokenExpired?.getTime() < new Date(Date.now() - 15 * 60 * 1000).getTime()) {
       errors['token'] = {
         message: 'The token is expired.',
         rule: 'required'

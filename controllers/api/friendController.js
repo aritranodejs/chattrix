@@ -4,6 +4,10 @@ import { Validator } from 'node-input-validator';
 // Helpers
 import { response } from '../../config/response.js';
 
+// Mailer
+import { transporter, emailTemplatePath } from '../../config/mailer.js';
+import ejs from 'ejs';
+
 // Models
 import { User } from '../../models/User.js';
 import { Friend } from '../../models/Friend.js';
@@ -154,6 +158,30 @@ const store = async (req, res) => {
         friend.status = 'initiate';
         await friend.save();
 
+        //  mail to user 
+        const receiver = await User.findById(receiverId);
+        const sender = await User.findById(_id);
+        const subject = `${sender?.name} sent you a friend request`;
+
+        const content = 
+            `<div>
+                <p>Hii ${receiver?.name},</p>
+                <p>${sender?.name} has sent you a friend request.</p>
+                <p>Click on the link below to accept or reject the request:</p>
+                <a href="${process.env.SITE_URL}/chat">Click Here</a>
+                <p>Thank you for using our service!</p>
+            </div>`;
+        const emailContent = await ejs.renderFile(emailTemplatePath, {
+            title: subject,
+            content: content
+        });
+        const mailOptions = {
+            to: receiver?.email,
+            subject: subject,
+            html: emailContent
+        };
+        await transporter.sendMail(mailOptions);
+
         return response(res, friend, 'Friend Request Sent Successfully', 200);
     } catch (error) {
         return response(res, req.body, error.message, 500);
@@ -179,6 +207,7 @@ const toggleStatus = async (req, res) => {
                 acceptedAt: new Date()
             };
             message = 'You both are now friends';
+            await sendEmail(receiverId, _id, 'accepted');
         } else if (status === 'deleted') {
             // Delete the friend relationship
             await Friend.findOneAndDelete({
@@ -188,18 +217,21 @@ const toggleStatus = async (req, res) => {
                 ]
             });
             message = 'Friend request rejected';
+            await sendEmail(receiverId, _id, 'rejected');
         } else if (status === 'blocked') {
             updateData = {
                 status: 'blocked',
                 blockedAt: new Date()
             };
             message = 'User has been blocked';
+            await sendEmail(receiverId, _id, 'blocked');
         } else if (status === 'unfriend') {
             updateData = {
                 status: 'unfriend',
                 unfriendAt: new Date()
             };
             message = 'You are no longer friends';
+            await sendEmail(receiverId, _id, 'unfriend');
         } else {
             return response(res, {}, 'Invalid status', 422);
         }
@@ -220,6 +252,28 @@ const toggleStatus = async (req, res) => {
         return response(res, req.body, error.message, 500);
     }
 };
+
+const sendEmail = async (receiverId, senderId, status) => {
+    const receiver = await User.findById(receiverId);
+    const sender = await User.findById(senderId);
+    const subject = `${sender?.name} has ${status} ${status === 'accepted' ? 'your friend request' : 'you'}`;
+    const content = 
+        `<div>
+            <p>Hii ${receiver?.name},</p>
+            <p>${sender?.name} has ${status} ${status === 'accepted' ? 'your friend request' : 'you'}.</p>
+            <p>Thank you for using our service!</p>
+        </div>`;
+    const emailContent = await ejs.renderFile(emailTemplatePath, {
+        title: subject,
+        content: content
+    });
+    const mailOptions = {
+        to: receiver?.email,
+        subject: subject,
+        html: emailContent
+    };
+    await transporter.sendMail(mailOptions);
+}
 
 // Export as a named export
 export {

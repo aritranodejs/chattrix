@@ -2,19 +2,18 @@
 import { Validator } from 'node-input-validator';
 
 // Common Response
-import { response } from '../../../../config/response.js';
+import { response } from '../../../config/response.js';
 
 // nanoid - Unique Token
 import { customAlphabet } from 'nanoid';
-const generateUniqueCode = customAlphabet('0123456789', 4);
+const generateUniqueCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 24);
 
 // Mailer
-import { transporter, emailTemplatePath, mailOption } from '../../../../config/mailer.js';
+import { transporter, emailTemplatePath, mailOption } from '../../../config/mailer.js';
 import ejs from 'ejs';
 
 // Model
-import { Op } from 'sequelize';
-import { User } from '../../../../models/User.js';
+import { User } from '../../../models/User.js';
 
 const forgotPassword = async (req, res) => {
   try {
@@ -30,9 +29,7 @@ const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     const user = await User.findOne({
-      where: {
-        email: { [Op.eq]: email }
-      }
+      email: email
     });
     if (!user) {
       errors['email'] = {
@@ -50,15 +47,13 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // FrontEnd BaseUrl
-    const baseUrl = process.env.SITE_URL || 'https://bcuz.us';
+    const baseUrl = process.env.SITE_URL;
 
     // Mail
     const subject = 'Reset Password Link.';
     const content = `<div>
       <p><a href="${baseUrl}/reset-password/${user.passwordToken}">Click here</a> to reset your password.</p>
-      <p>Alternatively, you can use the bellow code to reset the password.</p>
-      <p>Code: ${user.passwordToken}</p>
-      <p>N.B.: This link/code will expired after 1 hour.</p>
+      <p>N.B.: This link/code will expired after 15 minutes.</p>
     </div>`;
     const emailContent = await ejs.renderFile(emailTemplatePath, {
       user: user?.name,
