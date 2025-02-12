@@ -5,10 +5,10 @@ import group from "express-group-routes";
 const router = express.Router();
 
 // Helpers
-import { response } from "../config/response.js"; 
+import { response } from "../helpers/response.js"; 
 
 // JWT Middleware - Auth
-import { authentication, roleAuthorization } from '../config/auth.js'; 
+import { authentication, roleAuthorization } from '../helpers/auth.js'; 
 
 // Controllers 
 import * as friendController from '../controllers/api/friendController.js'; 

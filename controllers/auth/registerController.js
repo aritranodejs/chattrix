@@ -6,13 +6,13 @@ import bcrypt from "bcrypt";
 const salt = bcrypt.genSaltSync(10); // generate a salt
 
 // Helpers
-import { response } from "../../config/response.js";
+import { response } from "../../helpers/response.js";
 
 // JWT Middleware - Auth
-import { generateAuthToken } from '../../config/auth.js';
+import { generateAuthToken } from '../../helpers/auth.js';
 
 // Mailer
-import { transporter, emailTemplatePath } from '../../config/mailer.js';
+import { transporter, emailTemplatePath } from '../../helpers/mailer.js';
 import ejs from 'ejs';
 
 // Slug 

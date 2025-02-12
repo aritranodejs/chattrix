@@ -2,14 +2,14 @@
 import { Validator } from 'node-input-validator';
 
 // Common Response
-import { response } from '../../../config/response.js';
+import { response } from '../../../helpers/response.js';
 
 // nanoid - Unique Token
 import { customAlphabet } from 'nanoid';
 const generateUniqueCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 24);
 
 // Mailer
-import { transporter, emailTemplatePath, mailOption } from '../../../config/mailer.js';
+import { transporter, emailTemplatePath, mailOption } from '../../../helpers/mailer.js';
 import ejs from 'ejs';
 
 // Model

@@ -2,10 +2,10 @@ import express from 'express';
 import group from 'express-group-routes';
 
 // Helpers
-import { response } from '../config/response.js';
+import { response } from '../helpers/response.js';
 
 // JWT Middleware - Auth
-import { authentication, roleAuthorization } from '../config/auth.js';
+import { authentication, roleAuthorization } from '../helpers/auth.js';
 
 // Controllers
 import { register } from '../controllers/auth/registerController.js';

@@ -2,10 +2,10 @@
 import { Validator } from 'node-input-validator';
 
 // Helpers
-import { response } from '../../config/response.js';
+import { response } from '../../helpers/response.js';
 
 // Mailer
-import { transporter, emailTemplatePath } from '../../config/mailer.js';
+import { transporter, emailTemplatePath } from '../../helpers/mailer.js';
 import ejs from 'ejs';
 
 // Models

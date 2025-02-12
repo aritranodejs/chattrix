@@ -6,10 +6,10 @@ import bcrypt from 'bcrypt';
 const salt = bcrypt.genSaltSync(10); // generate a salt
 
 // Common Response
-import { response } from '../../../config/response.js';
+import { response } from '../../../helpers/response.js';
 
 // Mailer
-import { transporter, emailTemplatePath, mailOption } from '../../../config/mailer.js';
+import { transporter, emailTemplatePath, mailOption } from '../../../helpers/mailer.js';
 import ejs from 'ejs';
 
 // User Model

@@ -2,7 +2,7 @@
 import { Validator } from 'node-input-validator';
 
 // Helpers
-import { response } from '../../config/response.js';
+import { response } from '../../helpers/response.js';
 
 // Socket Helper
 import { emitEventToRoom } from '../../helpers/socketHelper.js';

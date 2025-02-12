@@ -5,10 +5,10 @@ import { Validator } from 'node-input-validator';
 import bcrypt from 'bcrypt';
 
 // Import Common Response
-import { response } from '../../config/response.js';
+import { response } from '../../helpers/response.js';
 
 // Import JWT Middleware - Auth
-import { generateAuthToken } from '../../config/auth.js';
+import { generateAuthToken } from '../../helpers/auth.js';
 
 // Import User Agent Parser
 import useragent from 'useragent';
