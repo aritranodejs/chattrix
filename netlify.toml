@@ -1,2 +1,6 @@
 [build]
-    functions = "functions"
+  command = "npm install"
+  functions = "functions"
+
+[dev]
+  command = "node server.js"
