@@ -27,3 +27,5 @@ coverage/
 
 # Uploads
 public/uploads/
+# Local Netlify folder
+.netlify
